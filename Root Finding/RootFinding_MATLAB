@@ -1,0 +1,55 @@
+function [root, fx, ea, iter] = falsePosition(func, xl, xu, es, maxit, varargin)
+% Created by Christopher Lambert
+% Inputs:
+%   func - the function being evaluated
+%   xl - the lower guess
+%   xu - the upper guess
+%   es - the desired relative error (should default to 0.0001%)
+%   maxit - the maximum number of iterations to use (should default to 200)
+%   varargin, . . . - any additional parameters used by the function
+% Outputs:
+%   root - the estimated root location
+%   fx - the function evaluated at the root location
+%   ea - the approximate relative error (%)
+%   iter - how many iterations were performed
+% Explantion:
+%   Using root finding bisection method the function finds the root of a function bounded by a lower and upper bound that the root is within.
+
+es = 0.0001; % Stopping criteria error
+maxit = 200; % Max number of iterations is 200 to limit an infinite use of the function (NO GOLDEN RETRIEVERS)
+if nargin<4|isempty(es) % Checks number of inputs and puts in predetermined values for es and maxit if not enough inputs
+    es = 0.0001;
+end
+if nargin<5|isempty(maxit) 
+    maxit = 200;
+end
+
+xr=xl;
+iter=0;
+ea=100;
+
+if (func(xl,varargin{:}))*(func(xu,varargin{:}))>0 % Checks to see if one of the bounds: xl or xu, are a root.
+    error('Check Bounds - Keep in Mind one may be the Root')
+end
+
+while (1) % While loop that keeps performing bisection method until the root is found with an error less than the stopping criteria or after it has performed 200 iterations.
+    iter=iter+1;
+    xroot_old=xr;
+    xr=(xu+xl)/2;
+    if xr ~= 0
+        ea=abs((xr-xroot_old)/xr)*100;
+    end
+    if (func(xl,varargin{:}))*(func(xr,varargin{:}))>0
+        xl=xr;
+    elseif (func(xl,varargin{:}))*(func(xr,varargin{:}))<0
+        xu=xr;
+    else
+        ea=0;
+    end
+    if ea<es || iter>=maxit
+        break
+    end
+end
+
+root = xr; % Root of the function given.
+fx = func(root,varargin{:}); 
