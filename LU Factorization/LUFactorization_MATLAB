@@ -1,0 +1,32 @@
+function [L, U, P] = luFactor(A)
+% Created By: Christopher Lambert
+% luFactor(A)
+%	LU decomposition with pivotiing
+% inputs:
+%	A = coefficient matrix
+% outputs:
+%	L = lower triangular matrix
+%	U = upper triangular matrix
+%       P = the permutation matrix
+
+n = length(A);
+L = zeros(n);
+U = A;
+P = eye(n);
+
+for i = 1:n-1 % Uses LU Factorization to determine the value of U, L, and P which can be used to find the values of x which satisfy the original matrix.
+    [temp,j] = max(abs(U(i:n,i)));
+    j = j+(i-1);
+    if temp ==0
+        error('Check to see if square matrix: m==n');
+    end
+    U([i,j],:) = U([j,i],:);
+    P([i,j],:) = P([j,i],:);
+    L([i,j],:) = L([j,i],:);
+    for j=i+1:n
+        mult = -U(j,i)/U(i,i);
+        U(j,:) = U(j,:) + mult*U(i,:);
+        L(j,i) = -mult;
+    end
+end
+L = L + eye(n);
