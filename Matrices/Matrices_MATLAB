@@ -1,0 +1,22 @@
+function [A] = specialMatrix(n,m)
+% Created by: Christopher Lambert
+% This function should return a matrix A as described in the problem statement
+% Inputs n is the number of rows, and m the number of columns
+
+% Define Variables and error cases:
+if nargin~=2
+    error('Only 2 vaulues can be input into the function')
+end
+if n<=0 || m<=0
+    error('Values of n and m need to be greater than 0')
+end
+% Now the real challenge is to fill in the correct values of A
+A=zeros(n,m);
+A(:,1)=1:n; % Using Matrix Adressing all of the elements in column 1 (A(:,1)) will equal the number of the element in row 1 from element one to n.
+A(1,:)=1:m; % Same thing here but reversed
+
+for rows = 2:n % For the rows from element 2 to n (look below for explanation)
+    for columns = 2:m % For colums from element 2 to m (for only the middle elements and not the outer rows and colums which were used for the first part of the question)
+        A(rows,columns) = (A(rows-1,columns)+A(rows,columns-1)) % The rows and colums in the rest of the elements equal the element above it and the left of it. For this to work you have to use matrix adressing to adress the elements above and the left of the element in the element of the matrix.
+    end
+end
