@@ -1,0 +1,71 @@
+function [fX, fY, slope, intercept, Rsquared] = linearRegression(x,y)
+% Created By: Christopher Lambert 
+% Mech 105 - Spring 2022
+
+% linearRegression Computes the linear regression of a data set
+%   Compute the linear regression based on inputs:
+%     1. x: x-values for our data set
+%     2. y: y-values for our data set
+%
+%   Outputs:
+%     1. fX: x-values with outliers removed
+%     2. fY: y-values with outliers removed
+%     3. slope: slope from the linear regression y=mx+b
+%     4. intercept: intercept from the linear regression y=mx+b
+%     5. Rsquared: R^2, a.k.a. coefficient of determination
+
+% Check to See if Y and X are the same size
+if length(y)~=length(x)
+    error('Check to make sure the lengths of x and y are the same')
+end
+
+% Removing The Outliers and Sorting the Data
+n=length(x);
+[sortedY, sortOrder] = sort(y);
+sortedX = x(sortOrder);
+
+
+
+if issorted(x) == 1 && issorted(y) == 1
+    sortedX = x;
+    sortedY = y;
+else
+    [sortedY, sortOrder] = sort(y);
+    sortedX = x(sortOrder);
+end
+Q1 = sortedY(floor((n+1)/4));
+Q3 = sortedY(floor(((3*n)+3)/4));
+IQR = Q3-Q1;
+upper_bound = Q3 + 1.5*IQR;
+lower_bound = Q1 - 1.5*IQR;
+outliers = find(sortedY < lower_bound | sortedY > upper_bound);
+sortedX(outliers) = [];
+sortedY(outliers) = [];
+fX = sortedX;
+fY = sortedY;
+
+% Means
+y_mean = mean(fY);
+x_mean = mean(fX);
+
+% Calculating Linear Regression in the Form f(x) = mx+b
+ybar = mean(fY);
+xbar = mean(fX);
+sumxy = sum(fX.*fY);
+sumx = sum(fX);
+sumy = sum(fY);
+sumx2 = sum(fX.^2);
+sumy2 = sum(fY.^2);
+n = length(fX);
+
+% Normal equations
+a_1 = ((n*sumxy)-(sumx*sumy))/((n*sumx2)-(sumx)^2);
+a_0 = ybar - a_1*xbar;
+
+slope = a_1;
+intercept = a_0;
+f(x) = a_0+(a_1.*x);
+
+% Calculating R-Squared
+Rsquared = (((n*sumxy)-(sumx*sumy)) / (sqrt((n*sumx2)-sumx^2)*sqrt((n*sumy2)-sumy^2)))^2;
+end
